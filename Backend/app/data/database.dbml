@@ -1,0 +1,72 @@
+enum role__t {
+	
+}
+
+enum status__t {
+	
+}
+
+enum status__t {
+	
+}
+
+enum status__t {
+	
+}
+
+Table Users [headercolor: #175e7a] {
+	user_id integer [ pk, increment, not null, unique ]
+	nama_lengkap varchar [ not null ]
+	email varchar [ not null ]
+	password varchar [ not null ]
+	role role__t [ not null ]
+	created_at datetime [ not null ]
+	updated_at datetime [ not null ]
+}
+
+Table Rooms [headercolor: #175e7a] {
+	room_id integer [ pk, increment, not null, unique ]
+	nomor_kamar varchar [ not null ]
+	tipe_kamar varchar [ not null ]
+	harga_bulanan decimal [ not null ]
+	status status__t [ not null ]
+	created_at datetime [ not null ]
+	updated_at datetime [ not null ]
+}
+
+Table Rentals [headercolor: #175e7a] {
+	rental_id integer [ pk, increment, not null, unique ]
+	tenant_id integer [ not null ]
+	room_id integer [ not null ]
+	tanggal_mulai date [ not null ]
+	tanggal_selesai date
+	durasi_bulan integer [ not null ]
+	total_biaya decimal [ not null ]
+	status status__t [ not null ]
+	created_at datetime [ not null ]
+	updated_at datetime [ not null ]
+}
+
+Table Payments [headercolor: #175e7a] {
+	payment_id integer [ pk, increment, not null, unique ]
+	rental_id integer [ not null ]
+	jumlah_bayar decimal [ not null ]
+	bulan_untuk date [ not null ]
+	tanggal_bayar datetime [ not null ]
+	metode_bayar varchar [ not null ]
+	status status__t [ not null ]
+	created_at datetime [ not null ]
+	updated_at datetime [ not null ]
+}
+
+Ref "" {
+	Rentals.rental_id < Payments.rental_id [ delete: no action, update: no action ]
+}
+
+Ref "" {
+	Rooms.room_id < Rentals.room_id [ delete: no action, update: no action ]
+}
+
+Ref "" {
+	Rentals.tenant_id > Users.user_id [ delete: no action, update: no action ]
+}
