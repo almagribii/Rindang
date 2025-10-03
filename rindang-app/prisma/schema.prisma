@@ -1,15 +1,99 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
-}
-
+// 1. Konfigurasi Koneksi & Generator
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 2. Tipe Data ENUM (Pengganti Tipe Data Kustom)
+enum UserRole {
+  ADMIN
+  TENANT
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+}
+
+enum RentalStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  FAILED
+}
+
+
+// 3. Model Database (Pengganti Tabel)
+
+model Users {
+    user_id       Int       @id @default(autoincrement()) // SERIAL PRIMARY KEY
+    nama_lengkap  String    @db.VarChar(255)
+    email         String    @unique @db.VarChar(255)
+    password      String    @db.VarChar(255)
+    role          UserRole
+    created_at    DateTime  @default(now()) @db.Timestamptz(3)
+    updated_at    DateTime  @updatedAt @db.Timestamptz(3)
+    
+    Rentals       Rentals[] // Relasi
+    @@map("Users") // Memastikan nama tabel sesuai dengan SQL awal
+}
+
+model Rooms {
+    room_id       Int         @id @default(autoincrement())
+    nomor_kamar   String      @unique @db.VarChar(255)
+    tipe_kamar    String      @db.VarChar(255)
+    harga_bulanan Decimal     @db.Decimal(10, 2)
+    status        RoomStatus
+    created_at    DateTime    @default(now()) @db.Timestamptz(3)
+    updated_at    DateTime    @updatedAt @db.Timestamptz(3)
+    
+    Rentals       Rentals[]
+    @@map("Rooms")
+}
+
+model Rentals {
+    rental_id       Int           @id @default(autoincrement())
+    tenant_id       Int
+    room_id         Int
+    tanggal_mulai   DateTime      @db.Date
+    tanggal_selesai DateTime?     @db.Date // ? berarti boleh null
+    durasi_bulan    Int
+    total_biaya     Decimal       @db.Decimal(10, 2)
+    status          RentalStatus
+    created_at      DateTime      @default(now()) @db.Timestamptz(3)
+    updated_at      DateTime      @updatedAt @db.Timestamptz(3)
+
+    // Relasi: Foreign Keys
+    tenant          Users         @relation(fields: [tenant_id], references: [user_id])
+    room            Rooms         @relation(fields: [room_id], references: [room_id])
+    Payments        Payments[]
+    
+    @@map("Rentals")
+}
+
+model Payments {
+    payment_id      Int           @id @default(autoincrement())
+    rental_id       Int
+    jumlah_bayar    Decimal       @db.Decimal(10, 2)
+    bulan_untuk     DateTime      @db.Date
+    tanggal_bayar   DateTime      @default(now()) @db.Timestamptz(3)
+    metode_bayar    String        @db.VarChar(255)
+    status          PaymentStatus
+    created_at      DateTime      @default(now()) @db.Timestamptz(3)
+    updated_at      DateTime      @updatedAt @db.Timestamptz(3)
+
+    // Relasi: Foreign Key
+    rental          Rentals       @relation(fields: [rental_id], references: [rental_id])
+
+    @@map("Payments")
 }
