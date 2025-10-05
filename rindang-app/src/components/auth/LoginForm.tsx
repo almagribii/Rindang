@@ -13,7 +13,6 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Klien Supabase sisi browser (aman untuk login)
   const supabase = createSupabaseBrowserClient();
 
   const handleLogin = async (e: React.FormEvent) => {
