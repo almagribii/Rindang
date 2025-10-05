@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link"; // Import Link untuk navigasi
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -40,7 +40,7 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleLogin} className="space-y-6">
-      <h2 className="text-2xl font-semibold text-center">Masuk ke Rindang</h2>
+      <h2 className="text-2xl font-semibold text-center">Daftar ke Rindang</h2>
       {errorMsg && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative text-sm">
           {errorMsg}
@@ -92,7 +92,7 @@ export default function LoginForm() {
       <div className="text-center text-sm">
         Belum punya akun?{" "}
         <Link
-          href="/register"
+          href="/auth/register"
           className="font-medium text-indigo-600 hover:text-indigo-500"
         >
           Daftar di sini

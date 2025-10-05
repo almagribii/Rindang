@@ -79,7 +79,7 @@ export default function Navbar() {
               </div>
             ) : (
               <Link
-                href="/auth/login"
+                href="/login"
                 className="flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
               >
                 <LogIn size={18} className="mr-1" /> Login
